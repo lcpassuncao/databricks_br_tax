@@ -30,11 +30,25 @@ dbutils.fs.cp('file:/tmp/nfe.xml', working_dir + '/{filename}')
 nfe_path = f"dbfs:/user/{clean_username}/db_tax/{filename}"
 
 print("NFe XML Path: " + nfe_path)
+
+
+# COMMAND ----------
+
 dbutils.fs.head(nfe_path)
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC CREATE TABLE bronze_luisassuncao_nfe_dest
-# MAGIC USING xml
-# MAGIC OPTIONS (path "dbfs:/user/luis_assuncao_databricks_com/db_tax/nfe.xml", rowTag "dest")
+# MAGIC %scala
+# MAGIC import com.databricks.spark.xml._ 
+# MAGIC import com.databricks.spark.xml.functions.from_xml
+# MAGIC import com.databricks.spark.xml.schema_of_xml
+# MAGIC import spark.implicits._
+
+# COMMAND ----------
+
+# MAGIC %scala
+# MAGIC val df = spark.read
+# MAGIC   .option("rowTag", "dest")
+# MAGIC   .xml("dbfs:/user/luis_assuncao_databricks_com/db_tax/nfe.xml")
+# MAGIC 
+# MAGIC display(df)
